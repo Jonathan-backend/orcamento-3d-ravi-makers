@@ -20,15 +20,16 @@ public class ProductController {
   @NotNull @DecimalMin("0") @DecimalMax("9999999999.99") @Digits(integer=10,fraction=2) BigDecimal price,
   @NotBlank @Size(max=80) String category,String imageDataUrl,String image2DataUrl,String image3DataUrl,
   @Size(max=500) String colors,@Size(max=500) String sizes,
-  @NotNull @DecimalMin("0") @DecimalMax("9999999999.99") BigDecimal technicalCost,boolean published,boolean featured){}
+  @NotNull @DecimalMin("0") @DecimalMax("9999999999.99") BigDecimal technicalCost,boolean published,boolean featured,
+  @Size(max=10,message="Selecione no máximo 10 fotos") List<String> images){}
  public record Response(Long id,String name,String description,BigDecimal price,String category,String imageDataUrl,String image2DataUrl,String image3DataUrl,
-  String colors,String sizes,BigDecimal technicalCost,BigDecimal marginValue,BigDecimal marginPercent,boolean published,boolean featured,Instant createdAt){
-  static Response from(Product p){BigDecimal margin=p.getPrice().subtract(p.getTechnicalCost()),percent=p.getTechnicalCost().signum()==0?BigDecimal.ZERO:margin.multiply(BigDecimal.valueOf(100)).divide(p.getTechnicalCost(),2,java.math.RoundingMode.HALF_UP);return new Response(p.getId(),p.getName(),p.getDescription(),p.getPrice(),p.getCategory(),p.getImageDataUrl(),p.getImage2DataUrl(),p.getImage3DataUrl(),p.getColors(),p.getSizes(),p.getTechnicalCost(),margin,percent,p.isPublished(),p.isFeatured(),p.getCreatedAt());}
+  String colors,String sizes,BigDecimal technicalCost,BigDecimal marginValue,BigDecimal marginPercent,boolean published,boolean featured,Instant createdAt,List<String> images){
+  static Response from(Product p){BigDecimal margin=p.getPrice().subtract(p.getTechnicalCost()),percent=p.getTechnicalCost().signum()==0?BigDecimal.ZERO:margin.multiply(BigDecimal.valueOf(100)).divide(p.getTechnicalCost(),2,java.math.RoundingMode.HALF_UP);return new Response(p.getId(),p.getName(),p.getDescription(),p.getPrice(),p.getCategory(),p.getImageDataUrl(),p.getImage2DataUrl(),p.getImage3DataUrl(),p.getColors(),p.getSizes(),p.getTechnicalCost(),margin,percent,p.isPublished(),p.isFeatured(),p.getCreatedAt(),p.getImages());}
  }
  public record PublicProduct(Long id,String name,String description,BigDecimal price,String category,
-  String imageDataUrl,String image2DataUrl,String image3DataUrl,String colors,String sizes,boolean featured){
+  String imageDataUrl,String image2DataUrl,String image3DataUrl,String colors,String sizes,boolean featured,List<String> images){
   static PublicProduct from(Product p){return new PublicProduct(p.getId(),p.getName(),p.getDescription(),p.getPrice(),
-   p.getCategory(),p.getImageDataUrl(),p.getImage2DataUrl(),p.getImage3DataUrl(),p.getColors(),p.getSizes(),p.isFeatured());}
+   p.getCategory(),p.getImageDataUrl(),p.getImage2DataUrl(),p.getImage3DataUrl(),p.getColors(),p.getSizes(),p.isFeatured(),p.getImages());}
  }
  public record PublicCatalog(Long ownerId,String companyName,String phone,String logoDataUrl,List<PublicProduct> products){}
 
@@ -52,7 +53,7 @@ public class ProductController {
    products.findByOwnerIdAndPublishedTrueOrderByFeaturedDescCreatedAtDesc(ownerId).stream().map(PublicProduct::from).toList());
  }
  private Product owned(Long id,String email){return products.findByIdAndOwnerEmail(id,email).orElseThrow(()->new NoSuchElementException("Produto não encontrado"));}
- private void apply(Product p,Request r){p.setName(r.name().trim());p.setDescription(clean(r.description()));p.setPrice(r.price());p.setCategory(r.category().trim());p.setImageDataUrl(validImage(r.imageDataUrl()));p.setImage2DataUrl(validImage(r.image2DataUrl()));p.setImage3DataUrl(validImage(r.image3DataUrl()));p.setColors(clean(r.colors()));p.setSizes(clean(r.sizes()));p.setTechnicalCost(r.technicalCost());p.setPublished(r.published());p.setFeatured(r.featured());}
+ private void apply(Product p,Request r){p.setName(r.name().trim());p.setDescription(clean(r.description()));p.setPrice(r.price());p.setCategory(r.category().trim());List<String> requested=r.images()!=null?r.images():Arrays.asList(r.imageDataUrl(),r.image2DataUrl(),r.image3DataUrl());if(requested.size()>10)throw new IllegalArgumentException("Selecione no máximo 10 fotos");p.setImages(requested.stream().map(this::validImage).filter(Objects::nonNull).toList());p.setColors(clean(r.colors()));p.setSizes(clean(r.sizes()));p.setTechnicalCost(r.technicalCost());p.setPublished(r.published());p.setFeatured(r.featured());}
  private String validImage(String value){
   if(value==null||value.isBlank())return null;
   String image=value.trim();int comma=image.indexOf(',');
