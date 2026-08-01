@@ -4,5 +4,6 @@ data/
 .vscode/
 *.iml
 .env
+render.yaml
 *.log
 tmp/
