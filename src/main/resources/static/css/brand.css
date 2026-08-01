@@ -1,0 +1,68 @@
+:root{--bg:#070707;--sidebar:#0a0a0b;--panel:#141415;--panel2:#101011;--line:#303033;--text:#f5f5f5;--muted:#9b9b9f;--cyan:#ff6a00;--green:#ff8a2b;--purple:#ffae68;--danger:#ff465f}
+.auth-page{background:#050505!important}.auth-showcase{background:radial-gradient(circle at 15% 10%,#442006 0,transparent 34%),radial-gradient(circle at 85% 80%,#271106 0,transparent 32%),linear-gradient(145deg,#0d0d0e,#050505);border-color:#33231a}.auth-showcase:before{background-image:linear-gradient(#9a4b1e 1px,transparent 1px),linear-gradient(90deg,#9a4b1e 1px,transparent 1px)}.auth-showcase-glow{border-color:#ff6a003d;box-shadow:0 0 90px #ff6a001f,inset 0 0 70px #ff6a0014}.auth-showcase-glow:before,.auth-showcase-glow:after{border-color:#ff8a2b33}.auth-showcase-badge{border-color:#804019;background:#291407;color:#ff9b55}.auth-feature-list i{border-color:#78360e;background:#281308;color:#ff8a2b}.auth-page .auth-card{border-color:#3b3029;background:#121213ed}.auth-page .signup-callout{border-color:#77360e;background:#261307}.catalog-ravi-logo{width:185px;height:52px}
+.ravi-brand-logo{
+  background-size:160% auto!important;
+  background-color:transparent!important;
+  mix-blend-mode:screen;
+  isolation:auto;
+}
+.auth-showcase-brand.ravi-brand-logo{
+  width:270px!important;
+  height:86px!important;
+}
+.sidebar .ravi-brand-logo{
+  width:205px!important;
+  height:70px!important;
+}
+.gcode-metadata{
+  margin:16px 0;
+  padding:16px;
+  border:1px solid #7b350f;
+  border-radius:12px;
+  background:linear-gradient(135deg,#241207,#151515);
+}
+.gcode-metadata-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:13px}
+.gcode-metadata-head strong{color:#ff8a2b}.gcode-metadata-head small{color:#9fa9ba}
+.gcode-metadata-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.gcode-metadata-grid div{padding:10px;border:1px solid #33261e;border-radius:9px;background:#0e0e0f}
+.gcode-metadata-grid span{display:block;color:#8d97a8;font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.gcode-metadata-grid strong{display:block;color:#f4f4f5;font-size:13px;overflow-wrap:anywhere}
+@media(max-width:900px){.gcode-metadata-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.gcode-metadata-head{align-items:flex-start;flex-direction:column}}
+.production-actions{display:flex;align-items:center;gap:5px;min-width:345px}
+.production-actions button{padding:7px 9px;font-size:11px;white-space:nowrap;box-shadow:none}
+.production-actions button:not(.danger-button){background:#21140d;border:1px solid #67300f;color:#ffad72}
+.production-actions button:hover{transform:translateY(-1px);border-color:#ff6a00}
+.production-detail-dialog{width:min(760px,calc(100vw - 32px))}
+.production-detail-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}
+.production-detail-summary div{padding:14px;border:1px solid #3b2a20;border-radius:10px;background:#101011}
+.production-detail-summary span{display:block;color:#929cab;font-size:11px;text-transform:uppercase;margin-bottom:6px}
+.production-detail-summary strong{color:#fff}.production-detail-plates{display:grid;gap:9px;margin-top:12px}
+.production-detail-plates>div{display:grid;grid-template-columns:1.4fr 2fr auto;gap:15px;align-items:center;padding:13px;border:1px solid #30251f;border-radius:9px;background:#101011}
+.production-detail-plates span{color:#9da6b4;font-size:12px}.production-detail-plates b{color:#ff8a2b}
+@media(max-width:800px){.production-detail-summary{grid-template-columns:repeat(2,1fr)}.production-detail-plates>div{grid-template-columns:1fr}.production-actions{min-width:300px}}
+
+/* Entrada compacta e direta */
+.auth-page{display:grid!important;grid-template-columns:1fr!important;place-items:center!important;min-height:100vh;padding:28px 18px!important;background:radial-gradient(circle at 50% -15%,#442006 0,transparent 38%),#070707!important}
+.auth-page>.auth-shell{width:min(430px,100%)!important;margin:0!important;padding:0!important}
+.auth-page .auth-card{padding:30px 28px!important;border:1px solid #3b3029!important;border-radius:14px;background:#121213f5!important;box-shadow:0 30px 90px #000b!important}
+.auth-card-logo.ravi-brand-logo{width:190px;height:62px;margin:0 auto 18px;background-size:175% auto}
+.auth-page .auth-card-heading{text-align:center!important;margin-bottom:22px!important}
+.auth-page .auth-card-heading h1{text-align:center!important;margin:0 0 6px!important;font-size:25px}
+.auth-page .auth-card-heading p{text-align:center!important;margin:0!important;font-size:12px}
+.auth-page .oauth-button{height:43px;margin:0!important;background:#0d1118!important;border-color:#35302d!important}
+.auth-page .auth-divider{margin:20px 0!important}
+.auth-page .auth-card label{margin-top:14px}
+.auth-page .auth-card input{background:#0d1118;border-color:#35302d}
+.auth-page .auth-card form button{height:44px;margin-top:12px!important}
+.auth-page .signup-callout{display:block!important;text-align:center!important;padding:15px!important;border-color:#77360e!important;background:#211309!important}
+.auth-page .signup-callout p{margin:6px 0 12px!important}
+.auth-page .signup-callout button{width:100%!important;margin:0!important;padding:11px!important}
+.auth-page .auth-legal{position:static!important;width:auto!important;margin:14px auto 0!important}
+.auth-mobile-logo{display:none!important}
+
+.app-toast-stack{position:fixed;top:20px;right:20px;z-index:10000;display:grid;gap:10px;width:min(390px,calc(100vw - 32px));pointer-events:none}
+.app-toast{display:grid;grid-template-columns:34px 1fr auto;gap:11px;align-items:center;padding:13px 14px;border:1px solid #3f332c;border-radius:11px;background:#151516f5;box-shadow:0 18px 50px #000a;opacity:0;transform:translateY(-10px);transition:.2s;pointer-events:auto}
+.app-toast.visible{opacity:1;transform:none}.app-toast>span{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;font-weight:900}
+.app-toast.success{border-color:#276442}.app-toast.success>span{background:#123c28;color:#54e596}.app-toast.error{border-color:#7d2835}.app-toast.error>span{background:#491923;color:#ff7187}
+.app-toast strong{display:block;color:#fff;font-size:12px}.app-toast p{margin:3px 0 0;color:#aeb5bf;font-size:11px;line-height:1.35}.app-toast button{padding:0!important;width:24px!important;height:24px!important;margin:0!important;background:transparent!important;border:0!important;box-shadow:none!important;color:#8d949e!important;font-size:18px}
+@media(max-width:600px){.app-toast-stack{top:12px;right:12px}}

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ofertas de filamento</title>
+  <link rel="stylesheet" href="/css/app.css"><link rel="stylesheet" href="/css/brand.css">
+</head>
+<body class="offers-public">
+  <header class="offers-header">
+    <a href="/" class="ravi-brand-logo offers-ravi-logo" aria-label="RAVI MAKERS"></a>
+    <a href="/app#estoque" class="offers-back">Voltar à aplicação</a>
+  </header>
+  <main class="offers-main">
+    <section class="offers-hero">
+      <p class="eyebrow">REPOSIÇÃO DE ESTOQUE</p>
+      <h1>Compare onde comprar seu filamento</h1>
+      <p id="offerContext">Selecionamos opções em diferentes lojas para facilitar sua reposição.</p>
+      <div class="offers-disclosure">Transparência: esta página contém links de afiliado. Podemos receber uma comissão pela compra, sem custo adicional para você.</div>
+    </section>
+    <section class="offers-toolbar">
+      <label>Material
+        <select id="offerMaterial">
+          <option value="">Todos</option><option>PLA</option><option>PETG</option><option>ABS</option><option>TPU</option><option>ASA</option>
+        </select>
+      </label>
+      <label>Ordenar por
+        <select id="offerOrder"><option value="recommended">Recomendadas</option><option value="store">Loja</option></select>
+      </label>
+    </section>
+    <section id="offersGrid" class="offers-grid"></section>
+    <p class="offers-note">Os preços e a disponibilidade são confirmados na página da loja. No teste atual, a comparação usa as ofertas cadastradas pelo administrador.</p>
+  </main>
+  <script>
+    const offers=[
+      {store:'Mercado Livre',badge:'ML',url:'https://meli.la/1pEtAHZ',color:'#ffe600',text:'#2d3277',description:'Confira variações, cores, prazo de entrega e condições diretamente no anúncio.'},
+      {store:'Shopee',badge:'S',url:'https://s.shopee.com.br/LltS5UA3H',color:'#ff5a1f',text:'#fff',description:'Veja cupons, frete e opções disponíveis diretamente na loja.'},
+      {store:'Amazon',badge:'a',url:'https://link.amazon/B0hUxuKM0',color:'#ffb347',text:'#172334',description:'Consulte preço, entrega e disponibilidade atualizados na Amazon.'}
+    ];
+    const params=new URLSearchParams(location.search),requestedMaterial=params.get('material')||'';
+    if(requestedMaterial){offerMaterial.value=[...offerMaterial.options].some(o=>o.value===requestedMaterial.toUpperCase())?requestedMaterial.toUpperCase():''}
+    const quantity=Number(params.get('quantidade')||0);
+    if(requestedMaterial||quantity)offerContext.textContent=`Sugestões para ${requestedMaterial||'filamento'}${quantity?`, com necessidade aproximada de ${quantity.toLocaleString('pt-BR')} g`:''}. Compare as lojas antes de comprar.`;
+    function render(){
+      const material=offerMaterial.value;
+      let rows=[...offers];if(offerOrder.value==='store')rows.sort((a,b)=>a.store.localeCompare(b.store));
+      offersGrid.innerHTML=rows.map((o,i)=>`<article class="offer-card"><div class="offer-store-logo" style="background:${o.color};color:${o.text}">${o.badge}</div><div class="offer-card-copy"><span>${o.store}</span><h2>Oferta de filamento${material?` ${material}`:''}</h2><p>${o.description}</p><div class="offer-tags"><b>${material||'Vários materiais'}</b><b>Link verificado</b></div></div><a href="${o.url}" target="_blank" rel="noopener sponsored" data-offer="${i}">Ver oferta na ${o.store} ↗</a></article>`).join('');
+    }
+    offerMaterial.onchange=render;offerOrder.onchange=render;render();
+  </script>
+</body>
+</html>

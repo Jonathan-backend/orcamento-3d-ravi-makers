@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Painel · RAVI MAKERS</title><link rel="stylesheet" href="/css/app.css"><link rel="stylesheet" href="/css/brand.css">
+</head><body class="dashboard-page">
+<aside class="sidebar">
+  <a class="logo ravi-brand-logo" href="/app" aria-label="RAVI MAKERS"></a>
+  <nav>
+    <a class="nav-link active" href="#painel" data-view-link="dashboard"><span>⌂</span>Painel</a>
+    <a class="nav-link" href="#estoque" data-view-link="inventory"><span>◇</span>Estoque</a>
+    <a class="nav-link" href="#clientes" data-view-link="customers"><span>♙</span>Clientes</a>
+    <a class="nav-link" href="#orcamento" data-view-link="quote"><span>▤</span>Orçar e produzir</a>
+    <a class="nav-link" href="#producao" data-view-link="production"><span>▱</span>Produção</a>
+    <a class="nav-link" href="#impressoras" data-view-link="printers"><span>▣</span>Impressoras</a>
+    <a class="nav-link" href="#historico" data-view-link="quotes"><span>◫</span>Orçamentos</a>
+    <a class="nav-link" href="#catalogo" data-view-link="catalog"><span>▧</span>Catálogo On-line</a>
+    <a class="nav-link" href="#produtos" data-view-link="products"><span>♧</span>Meus produtos</a>
+    <a class="nav-link" href="#configuracoes" data-view-link="settings"><span>⚙</span>Configurações</a>
+    <a class="nav-link hidden" id="supportReportsLink" href="#relatorios" data-view-link="supportReports"><span>!</span>Relatórios de bugs</a>
+  </nav>
+  <div class="sidebar-foot">
+    <button class="feedback-link" id="openFeedback" type="button">▣ Reportar bug ou erro</button>
+    <div class="sidebar-version"><small>v1.0.0</small><span>✦ NOVIDADES</span></div>
+  </div>
+</aside>
+<div class="shell">
+  <header class="topbar"><button class="menu-button" id="menuButton" aria-label="Abrir menu">☰</button><div class="topbar-spacer"></div>
+    <button class="mobile-feedback-button" id="openFeedbackMobile" type="button" aria-label="Reportar bug ou erro">! <span>Reportar erro</span></button>
+    <div class="user"><div class="avatar" id="avatar">OP</div><div class="user-copy"><strong id="userName"></strong><small id="role"></small></div><button class="ghost" id="logout">Sair</button></div>
+  </header>
+  <main class="content">
+    <div class="app-view" data-view="dashboard">
+    <section class="page-heading dashboard-heading"><div><p class="eyebrow">VISÃO GERAL</p><h1>Painel do cliente</h1><p class="muted">Indicadores financeiros, estoque e operação da sua impressão 3D.</p></div><div class="dashboard-periods" aria-label="Período do painel"><button type="button" data-dashboard-days="1">Diário</button><button type="button" data-dashboard-days="7">Semanal</button><button type="button" class="active" data-dashboard-days="30">Mensal</button><button type="button" data-dashboard-days="90">Trimestral</button><button type="button" data-dashboard-days="180">Semestral</button><button type="button" data-dashboard-days="365">Anual</button></div></section>
+    <section class="dashboard-kpis">
+      <article class="stat stat-cyan" title="Soma dos pedidos concluídos no período"><div class="stat-icon">R$</div><div><span>FATURAMENTO</span><strong id="dashboardRevenue">R$ 0,00</strong><small>pedidos concluídos</small></div></article>
+      <article class="stat stat-green" title="Faturamento menos o custo calculado"><div class="stat-icon">↗</div><div><span>LUCRO ESTIMADO</span><strong id="dashboardProfit">R$ 0,00</strong><small>resultado no período</small></div></article>
+      <article class="stat stat-amber" title="Valores dos pedidos ainda em andamento"><div class="stat-icon">▱</div><div><span>A RECEBER</span><strong id="dashboardReceivable">R$ 0,00</strong><small>produção em aberto</small></div></article>
+      <article class="stat stat-purple" title="Quantidade total de orçamentos"><div class="stat-icon">▤</div><div><span>ORÇAMENTOS</span><strong id="quoteCount">0</strong><small id="lastTotal">último: R$ 0,00</small></div></article>
+      <article class="stat stat-red" title="Reserva financeira estimada para falhas"><div class="stat-icon">⚠</div><div><span>RESERVA PARA FALHAS</span><strong id="dashboardFailures">R$ 0,00</strong><small>provisão dos projetos</small></div></article>
+      <article class="stat stat-cyan" title="Ordens atualmente na fila ou imprimindo"><div class="stat-icon">▣</div><div><span>PRODUÇÃO ATIVA</span><strong id="dashboardActivePrints">0</strong><small id="dashboardPrinterCaption">0 impressoras cadastradas</small></div></article>
+      <article class="stat stat-purple" title="Peso total disponível em filamentos"><div class="stat-icon">◇</div><div><span>ESTOQUE</span><strong id="dashboardInventoryKg">0,00 kg</strong><small id="dashboardStockValue">R$ 0,00 em materiais</small></div></article>
+      <article class="stat stat-green" title="Clientes ativos cadastrados"><div class="stat-icon">♙</div><div><span>CLIENTES</span><strong id="dashboardCustomers">0</strong><small>clientes ativos</small></div></article>
+      <article class="stat stat-amber" title="Tempo somado das ordens do período"><div class="stat-icon">◷</div><div><span>HORAS DE IMPRESSÃO</span><strong id="dashboardPrintHours">0 h</strong><small id="lastTime">último projeto: 0 min</small></div></article>
+      <span id="dashboardPrinters" class="hidden">0</span>
+    </section>
+    <section class="dashboard-analytics">
+      <article class="panel dashboard-chart-card"><div class="dashboard-card-head"><div><span class="panel-kicker">DESEMPENHO</span><h2>Faturamento e lucro</h2></div><div class="chart-legend"><span><i class="revenue-dot"></i>Faturamento</span><span><i class="profit-dot"></i>Lucro</span></div></div><div id="dashboardChart" class="dashboard-chart"></div></article>
+      <article class="panel dashboard-status-card"><div class="dashboard-card-head"><div><span class="panel-kicker">OPERAÇÃO</span><h2>Status das impressões</h2></div></div><div id="dashboardDonut" class="dashboard-donut"><strong id="dashboardDonutTotal">0</strong><span>ordens</span></div><div id="dashboardStatusLegend" class="dashboard-status-legend"></div></article>
+    </section>
+    <section class="dashboard-lists">
+      <article class="panel"><div class="dashboard-card-head"><div><span class="panel-kicker">ATIVIDADE</span><h2>Produções recentes</h2></div><a href="#producao">Ver produção →</a></div><div id="dashboardRecentProduction" class="dashboard-list"></div></article>
+      <article class="panel"><div class="dashboard-card-head"><div><span class="panel-kicker">PLANEJAMENTO</span><h2>Próximas entregas</h2></div><a href="#producao">Organizar →</a></div><div id="dashboardUpcoming" class="dashboard-list"></div></article>
+    </section>
+    </div>
+    <section id="clientes" class="customers-section app-view hidden" data-view="customers">
+      <div class="inventory-heading"><div><p class="eyebrow">RELACIONAMENTO</p><h2>Clientes</h2><p class="muted">Cadastre pessoas e empresas para seus orçamentos.</p></div><button id="newCustomer">＋ Novo cliente</button></div>
+      <div class="inventory-stats customer-stats"><article class="floating-stat"><span>CLIENTES CADASTRADOS</span><strong id="customerCount">0</strong></article><article class="floating-stat"><span>CLIENTES ATIVOS</span><strong id="customerActive">0</strong></article></div>
+      <div class="panel inventory-table-wrap"><div class="inventory-toolbar"><input id="customerSearch" placeholder="⌕ Buscar por nome, documento, telefone ou e-mail..."></div>
+        <table class="inventory-table"><thead><tr><th>Cliente</th><th>Tipo</th><th>Documento</th><th>Contato</th><th>Cidade/UF</th><th>Status</th><th>Ações</th></tr></thead><tbody id="customerRows"></tbody></table><p id="customerEmpty" class="empty">Nenhum cliente cadastrado.</p>
+      </div>
+    </section>
+    <section id="estoque" class="inventory-section app-view hidden" data-view="inventory">
+      <div class="inventory-heading"><div><p class="eyebrow">MATERIAIS</p><h2>Estoque de filamentos</h2><p class="muted">Controle entradas, retiradas e custo do seu estoque.</p></div><button id="newFilament">＋ Novo filamento</button></div>
+      <div class="inventory-stats">
+        <article class="floating-stat"><span>FILAMENTOS CADASTRADOS</span><strong id="inventoryCount">0</strong></article>
+        <article class="floating-stat"><span>ESTOQUE TOTAL</span><strong id="inventoryKg">0,00 kg</strong></article>
+        <article class="floating-stat"><span>VALOR EM ESTOQUE</span><strong id="inventoryValue">R$ 0,00</strong></article>
+      </div>
+      <article id="inventoryAffiliateOffer" class="affiliate-offer panel hidden">
+        <div class="affiliate-offer-icon">🛒</div>
+        <div><span class="panel-kicker">REPOSIÇÃO SUGERIDA</span><h3>Seu filamento está acabando</h3><p id="inventoryAffiliateReason">Há um item com estoque baixo.</p><small>Link de afiliado: podemos receber comissão pela compra, sem custo adicional para você.</small></div>
+        <div class="affiliate-marketplaces"><a href="/ofertas?origem=estoque">Comparar ofertas ↗</a></div>
+      </article>
+      <div class="panel inventory-table-wrap">
+        <div class="inventory-toolbar"><input id="inventorySearch" placeholder="⌕ Buscar por marca, material ou cor..."></div>
+        <table class="inventory-table"><thead><tr><th>Marca</th><th>Material</th><th>Cor</th><th>Preço/kg</th><th>Estoque</th><th>Ações</th></tr></thead><tbody id="inventoryRows"></tbody></table>
+        <p id="inventoryEmpty" class="empty">Nenhum filamento cadastrado.</p>
+      </div>
+      <div class="consumable-heading"><div><p class="eyebrow">COMPLEMENTOS</p><h2>Outros consumíveis</h2><p class="muted">Controle ímãs, colas, resinas, ferragens, tintas e embalagens.</p></div><button id="newConsumable">＋ Novo consumível</button></div>
+      <div class="consumable-stats"><article class="floating-stat"><span>ITENS CADASTRADOS</span><strong id="consumableCount">0</strong></article><article class="floating-stat"><span>VALOR DOS CONSUMÍVEIS</span><strong id="consumableValue">R$ 0,00</strong></article></div>
+      <div class="panel inventory-table-wrap">
+        <div class="inventory-toolbar"><input id="consumableSearch" placeholder="⌕ Buscar por categoria, nome ou marca..."></div>
+        <table class="inventory-table"><thead><tr><th>Categoria</th><th>Consumível</th><th>Marca</th><th>Preço unitário</th><th>Quantidade</th><th>Valor</th><th>Ações</th></tr></thead><tbody id="consumableRows"></tbody></table>
+        <p id="consumableEmpty" class="empty">Nenhum consumível cadastrado.</p>
+      </div>
+    </section>
+    <section class="app-view hidden" id="novo" data-view="quote">
+      <div class="inventory-heading quote-heading"><div><p class="eyebrow">PROPOSTAS</p><h2>Orçar & Produzir</h2><p class="muted">Combine uma ou mais placas, revise os custos e prepare a proposta para o cliente.</p></div></div>
+      <form id="uploadForm" class="quote-builder">
+        <div class="quote-main-column">
+          <article class="panel quote-section plates-section">
+            <div class="panel-heading"><div><span class="panel-kicker">ETAPA 1</span><h2>Placas de impressão</h2><p class="muted">Cada placa pode receber seu próprio G-code, filamento e impressora.</p></div><div class="panel-icon">▱</div></div>
+            <div id="plateList" class="plate-list"></div>
+            <button id="addPlate" class="add-plate-button" type="button">＋ Adicionar outra placa</button>
+          </article>
+          <article class="panel quote-section budget-printer-section">
+            <div class="panel-heading"><div><span class="panel-kicker">EQUIPAMENTO</span><h2>Impressora do orçamento</h2><p class="muted">Aplicada inicialmente a todas as placas e usada nos cálculos de energia, depreciação e manutenção.</p></div><div class="panel-icon">▣</div></div>
+            <div class="budget-printer-control"><label>Impressora<select id="globalBudgetPrinter"><option value="">Configuração padrão</option></select></label><button id="newBudgetPrinter" type="button" class="ghost">＋ Nova</button></div>
+            <p class="field-help">Se necessário, você ainda pode escolher uma impressora diferente dentro de uma placa específica.</p>
+          </article>
+          <article class="panel quote-section project-costs">
+            <div class="panel-heading"><div><span class="panel-kicker">ETAPA 2</span><h2>⚒ Custos adicionais e mão de obra</h2><p class="muted">Custos aplicados ao projeto inteiro, independentemente da quantidade de placas.</p></div></div>
+            <div class="extra-cost-grid detailed-cost-grid">
+              <div class="post-process-field"><span>Pós-processamento / acabamento</span><div><label>Horas<input id="postProcessHours" type="number" min="0" step="1" value="0" required></label><label>Minutos<input id="postProcessMinutes" type="number" min="0" max="59" step="1" value="0" required></label></div><small>Tempo humano total dedicado ao acabamento.</small></div>
+              <label>Embalagem e envio (R$)<input id="packingCost" class="brl-input" inputmode="decimal" value="0,00" required><small>Caixas, proteção, etiquetas, frete e outros.</small></label>
+              <label>Outros insumos e arquivos (R$)<input id="otherCosts" class="brl-input" inputmode="decimal" value="0,00" required><small>Tintas, argolas, parafusos, licença de STL etc.</small></label>
+            </div>
+          </article>
+          <article class="panel quote-section project-totals">
+            <div class="panel-heading compact-heading"><div><span class="panel-kicker">VISÃO GERAL</span><h2>Totais do projeto</h2></div><span id="plateCountSummary" class="count-pill">1 placa</span></div>
+            <div class="project-total-grid"><div><span>Peso total</span><strong id="projectTotalWeight">0,00 g</strong></div><div><span>Tempo total</span><strong id="projectTotalTime">0 min</strong></div><div><span>Comprimento</span><strong id="projectTotalLength">0,00 m</strong></div></div>
+          </article>
+          <article class="panel quote-section project-identification">
+            <div class="panel-heading"><div><span class="panel-kicker">ETAPA 3</span><h2>Identificação do orçamento</h2><p class="muted">Organize a proposta e vincule-a ao cadastro do cliente.</p></div><div class="panel-icon">▣</div></div>
+            <div class="quote-fields"><label class="field-label">Nome do orçamento<input id="budgetTitle" maxlength="140" value="Novo orçamento" required></label><label class="field-label">Cliente (opcional)<select id="quoteCustomer"><option value="">Consumidor não identificado</option></select></label></div>
+            <label class="field-label">Observações da proposta<textarea id="budgetNotes" rows="4" maxlength="800" placeholder="Prazo, acabamento, condições ou instruções importantes..."></textarea></label>
+          </article>
+          <p id="message" class="error quote-message"></p>
+        </div>
+        <aside class="quote-side-column">
+        <article class="panel quote-settings-panel">
+          <div class="panel-heading"><div><span class="panel-kicker">PRECIFICAÇÃO</span><h2>Orçamento</h2></div><div class="panel-icon">◎</div></div>
+          <div class="quote-tip">A margem é aplicada sobre material, máquina, energia e custos fixos configurados.</div>
+          <label class="margin-control"><span>Margem de lucro <strong id="marginValue">30%</strong></span><input id="quoteMargin" type="range" min="0" max="300" value="30"></label>
+          <button id="previewBudget" type="button"><span>⚡</span>Atualizar cálculo</button>
+          <div id="quoteAwaiting" class="quote-awaiting"><span>▤</span><strong>Aguardando G-code</strong><p>Selecione cliente, impressora e arquivo para gerar o resumo.</p></div>
+          <div id="result" class="result quote-result hidden">
+            <div class="panel-heading"><div><span class="panel-kicker">RESULTADO</span><h2 id="resultName">Projeto</h2></div><div class="success-badge">CALCULADO</div></div>
+            <div class="total"><span>Total estimado</span><strong id="total">R$ 0,00</strong></div>
+            <div class="metrics"><div><span>Tempo</span><strong id="time">—</strong></div><div><span>Filamento</span><strong id="grams">—</strong></div><div><span>Material</span><strong id="material">—</strong></div><div><span>Máquina</span><strong id="machine">—</strong></div><div><span>Energia</span><strong id="energy">—</strong></div></div>
+            <div class="cost-breakdown"><div><span>Filamento</span><strong id="breakFilament">—</strong></div><div id="magnetCostLine"><span>Ímãs / consumíveis</span><strong id="breakMagnets">—</strong></div><div class="material-subtotal"><span>Total de materiais</span><strong id="breakMaterial">—</strong></div><div><span>Energia</span><strong id="breakEnergy">—</strong></div><div><span>Depreciação da impressora</span><strong id="breakMachine">—</strong></div><div><span>Mão de obra / pós-processamento</span><strong id="breakLabor">—</strong></div><div><span>Manutenção da impressora</span><strong id="breakMaintenance">—</strong></div><div><span>Embalagem e outros custos</span><strong id="breakAdditional">—</strong></div><div><span id="failureLabel">Reserva para falhas</span><strong id="breakFailure">—</strong></div><div class="cost-total"><span>Custo total</span><strong id="breakCostTotal">—</strong></div></div>
+            <label class="final-price-control">Preço final editável<input id="budgetFinalPrice" class="brl-input" inputmode="decimal" placeholder="0,00"></label>
+            <label class="purpose-control">Finalidade<select id="budgetPurpose"><option value="STANDARD_SALE">Venda normal</option><option value="WHOLESALE">Atacado</option><option value="INTERNAL">Uso interno</option><option value="SAMPLE">Amostra / cortesia</option></select></label>
+            <div class="profit-line"><span>Lucro estimado</span><strong id="budgetProfit">—</strong></div>
+            <button id="analyze" type="button">▣ Enviar para produção</button><button id="saveDraft" type="button" class="ghost">▤ Salvar como rascunho</button>
+          </div>
+        </article>
+        <article class="panel global-parameters">
+          <span class="panel-kicker">REFERÊNCIA</span><h3>Parâmetros do cálculo</h3>
+          <p>Energia, hora de máquina e custos fixos usam as configurações atuais da conta.</p>
+          <a href="#configuracoes">Abrir configurações →</a>
+        </article>
+        <article id="quoteAffiliateOffer" class="panel affiliate-offer affiliate-offer-quote hidden">
+          <div class="affiliate-offer-icon">🧵</div>
+          <div><span class="panel-kicker">ESTOQUE INSUFICIENTE</span><h3>Este projeto precisa de mais filamento</h3><p id="quoteAffiliateReason"></p><small>Link de afiliado: podemos receber comissão pela compra, sem custo adicional para você.</small></div>
+          <div class="affiliate-marketplaces"><a id="quoteOffersLink" href="/ofertas?origem=orcamento">Comparar ofertas ↗</a></div>
+        </article>
+        </aside>
+      </form>
+    </section>
+    <section id="producao" class="production-section app-view hidden" data-view="production">
+      <div class="inventory-heading production-heading">
+        <div class="heading-with-icon"><span class="heading-icon">▱</span><div><p class="eyebrow">OPERAÇÃO</p><h2>Produção</h2><p class="muted">Acompanhe as ordens geradas pelos orçamentos e atualize cada etapa da impressão.</p></div></div>
+        <button id="refreshProduction" class="ghost small-button" type="button">↻ Atualizar</button>
+      </div>
+      <div class="production-stats">
+        <article class="floating-stat"><span>TOTAL DE ORDENS</span><strong id="productionTotal">0</strong></article>
+        <article class="floating-stat warning"><span>EM PRODUÇÃO</span><strong id="productionActive">0</strong></article>
+        <article class="floating-stat success"><span>CONCLUÍDAS</span><strong id="productionCompleted">0</strong></article>
+        <article class="floating-stat"><span>FATURAMENTO</span><strong id="productionRevenue">R$ 0,00</strong></article>
+        <article class="floating-stat"><span>ORÇAMENTOS DISPONÍVEIS</span><strong id="productionDrafts">0</strong></article>
+      </div>
+      <div class="production-tabs"><button class="active" type="button" data-production-tab="line">Linha de produção <span id="productionLineCount">0</span></button><button type="button" data-production-tab="drafts">Orçamentos <span id="productionDraftCount">0</span></button></div>
+      <article class="panel production-board">
+        <div class="production-toolbar"><input id="productionSearch" placeholder="⌕ Buscar por orçamento, cliente ou impressora..."><select id="productionFilter"><option value="">Todos os status</option><option value="PRODUCTION">Na fila</option><option value="PRINTING">Imprimindo</option><option value="PAUSED">Pausada</option><option value="COMPLETED">Concluída</option><option value="CANCELLED">Cancelada</option></select></div>
+        <div class="production-table-wrap"><table class="production-table"><thead><tr><th>Ordem</th><th>Cliente</th><th>Impressora</th><th>Material</th><th>Duração</th><th>Custo</th><th>Preço</th><th>Status</th><th>Ações</th></tr></thead><tbody id="productionRows"></tbody></table></div>
+        <p id="productionEmpty" class="empty">Nenhuma ordem encontrada.</p>
+      </article>
+      <p id="productionMessage" class="error"></p>
+    </section>
+    <section id="catalogo" class="catalog-admin-section app-view hidden" data-view="catalog">
+      <div class="inventory-heading"><div class="heading-with-icon"><span class="heading-icon">▧</span><div><p class="eyebrow">VENDAS ON-LINE</p><h2>Catálogo On-line</h2><p class="muted">Sua vitrine pública integrada aos produtos e ao WhatsApp.</p></div></div></div>
+      <div class="catalog-admin-hero panel"><div><span class="panel-kicker">LINK PÚBLICO</span><h2>Compartilhe sua impressão 3D com o mundo</h2><p>Os produtos publicados em Meus produtos aparecem automaticamente na sua vitrine.</p></div><div class="catalog-link-box"><input id="catalogPublicLink" readonly><button id="copyCatalogLink" type="button">Copiar link</button><a id="openCatalogLink" class="button-link ghost" target="_blank">Abrir catálogo ↗</a></div></div>
+      <div class="catalog-feature-grid"><article class="panel"><span>◉</span><h3>Visibilidade controlada</h3><p>Publique ou oculte produtos individualmente.</p></article><article class="panel"><span>◇</span><h3>Preço direto</h3><p>Exiba valores claros e organize seus produtos por categoria.</p></article><article class="panel"><span>↗</span><h3>Pedido pelo WhatsApp</h3><p>O cliente inicia a conversa com o produto e o preço preenchidos.</p></article></div>
+      <article class="panel coupon-admin"><div><span class="panel-kicker">CARRINHO + CUPONS</span><h3>Cupons de desconto</h3><p class="muted">Crie códigos percentuais para seus clientes aplicarem no carrinho.</p></div><form id="couponForm"><input id="couponId" type="hidden"><input id="couponCode" maxlength="30" placeholder="Código, ex.: BEMVINDO10" required><input id="couponPercent" type="number" min="0.01" max="100" step="0.01" placeholder="Desconto %" required><label><input id="couponActive" type="checkbox" checked> Ativo</label><button type="submit">Salvar cupom</button></form><div id="couponList" class="coupon-list"></div><p id="couponMessage" class="error"></p></article>
+      <article class="panel catalog-preview-panel"><div><span class="panel-kicker">RESUMO DA VITRINE</span><h3>Produtos publicados</h3></div><strong id="catalogPublishedCount">0</strong><a href="#produtos">Gerenciar produtos →</a></article>
+      <p id="catalogMessage" class="error"></p>
+    </section>
+    <section id="produtos" class="products-section app-view hidden" data-view="products">
+      <div class="inventory-heading"><div class="heading-with-icon"><span class="heading-icon">♧</span><div><p class="eyebrow">CATÁLOGO</p><h2>Meus produtos</h2><p class="muted">Cadastre as peças que serão exibidas na sua vitrine pública.</p></div></div><button id="newProduct" type="button">＋ Novo produto</button></div>
+      <div class="product-admin-stats"><article class="floating-stat"><span>CADASTRADOS</span><strong id="productTotal">0</strong></article><article class="floating-stat success"><span>PUBLICADOS</span><strong id="productPublished">0</strong></article></div>
+      <div id="productGrid" class="product-admin-grid"></div><p id="productEmpty" class="empty">Nenhum produto cadastrado.</p>
+    </section>
+    <section id="impressoras" class="printers-section app-view hidden" data-view="printers">
+      <div class="inventory-heading printer-heading"><div class="heading-with-icon"><span class="heading-icon">▣</span><div><p class="eyebrow">FARM</p><h2>Impressoras</h2><p class="muted">Gerencie as máquinas usadas no cálculo de energia e produção.</p></div></div><button id="togglePrinterForm" class="small-button">＋ Nova impressora</button></div>
+      <div class="printer-stats">
+        <article class="floating-stat"><span>▣ CADASTRADAS</span><strong id="printerCount">0</strong></article>
+        <article class="floating-stat"><span>ϟ POTÊNCIA TOTAL</span><strong id="printerTotalPower">0 W</strong></article>
+        <article class="floating-stat"><span>◉ MONITORAMENTO ATIVO</span><strong id="printerOnlineCount">0</strong></article>
+      </div>
+      <dialog id="printerDialog" class="app-dialog printer-dialog"><form id="printerForm" class="printer-form">
+        <div class="panel-heading"><div><span class="panel-kicker">CADASTRO</span><h2 id="printerFormTitle">Nova impressora</h2><p class="muted">Informe os dados técnicos e, se desejar, configure o monitoramento pela rede.</p></div><button type="button" class="dialog-close" id="closePrinterForm">×</button></div>
+        <input id="printerId" type="hidden">
+        <div class="printer-core-grid">
+          <label>Nome/apelido<input id="printerName" maxlength="100" required placeholder="Ex.: Ender da bancada"></label>
+          <label>Fabricante<input id="printerManufacturer" maxlength="100" placeholder="Ex.: Creality"></label>
+          <label>Modelo<input id="printerModel" list="printerModelSuggestions" maxlength="100" placeholder="Selecione ou digite um modelo"></label>
+          <datalist id="printerModelSuggestions"></datalist>
+          <label class="full-field">Potência média durante a impressão (W)<input id="printerPower" type="number" min="1" max="20000" required placeholder="350"><small>Use o consumo médio, não apenas a potência máxima da fonte.</small></label>
+          <label>Custo de aquisição (R$)<input id="printerAcquisitionCost" class="brl-input" inputmode="decimal" value="0,00"></label>
+          <label>Vida útil estimada (horas)<input id="printerUsefulLife" type="number" min="1" max="1000000" value="10000" required></label>
+          <label class="full-field">Manutenção por hora (R$)<input id="printerMaintenance" class="brl-input" inputmode="decimal" value="0,00"><small>Peças de reposição, lubrificação e outros custos recorrentes.</small></label>
+          <label class="full-field">Observações<textarea id="printerNotes" maxlength="1000" rows="3" placeholder="Detalhes da máquina, local de instalação ou lembretes..."></textarea></label>
+        </div>
+        <div class="form-section-title">Monitoramento pela rede</div><div class="form-grid printer-network-grid">
+          <label>Conexão<select id="printerType"><option value="MOONRAKER">Klipper / Moonraker</option><option value="OCTOPRINT">OctoPrint</option><option value="PRUSALINK">PrusaLink / Prusa Connect</option><option value="BAMBU_LAN">Bambu LAN</option><option value="GENERIC">Outro protocolo</option><option value="MANUAL">Somente manual</option></select></label>
+          <label>Endereço de rede<input id="printerUrl" type="url" placeholder="http://192.168.1.50"></label>
+          <label>Chave da API<input id="printerApiKey" type="password" maxlength="500" placeholder="Opcional no Moonraker"></label>
+          <label class="check-label"><input id="printerMonitoring" type="checkbox" checked> Monitorar pela rede</label>
+        </div>
+        <div class="form-actions"><button type="button" class="ghost" id="cancelPrinter">Cancelar</button><button type="submit">Salvar impressora</button></div>
+        <p id="printerMessage" class="error"></p>
+      </form></dialog>
+      <div class="panel printer-catalog">
+        <div class="printer-toolbar"><input id="printerSearch" placeholder="⌕ Buscar por nome, fabricante ou modelo..."><span id="printerResultCount">0 máquinas</span></div>
+        <div id="printerList" class="printer-grid"></div>
+        <p id="printerEmpty" class="empty">Nenhuma impressora cadastrada.</p>
+      </div>
+    </section>
+    <section id="configuracoes" class="settings-section app-view hidden" data-view="settings">
+      <div class="inventory-heading printer-heading"><div class="heading-with-icon"><span class="heading-icon">⚙</span><div><p class="eyebrow">PREFERÊNCIAS</p><h2>Configurações</h2><p class="muted">Parâmetros globais aplicados aos cálculos de Orçar & Produzir.</p></div></div></div>
+      <form id="pricingSettingsForm" class="panel settings-card">
+        <div class="panel-heading"><div><span class="panel-kicker">CÁLCULOS</span><h2>Parâmetros de precificação</h2><p class="muted">As alterações passam a valer imediatamente em novos cálculos.</p></div><div class="panel-icon">◎</div></div>
+        <div class="settings-grid">
+          <label>Custo da energia (R$/kWh)<input id="settingEnergy" class="brl-input" inputmode="decimal" required><small>Tarifa média cobrada pela concessionária.</small></label>
+          <label>Mão de obra (R$/hora)<input id="settingLabor" class="brl-input" inputmode="decimal" required><small>Valor padrão da hora de trabalho humano.</small></label>
+          <label>Taxa de falhas (%)<input id="settingFailure" type="number" min="0" max="100" step="0.01" required><small>Provisão para reimpressões e desperdícios.</small></label>
+          <label>Margem padrão (%)<input id="settingMargin" type="number" min="0" max="500" step="0.01" required><small>Margem sugerida ao abrir um orçamento.</small></label>
+          <label>Moeda<select id="settingCurrency" required><option value="BRL">Real brasileiro (R$)</option></select><small>Moeda utilizada nos cálculos e documentos.</small></label>
+        </div>
+        <div class="form-actions"><span id="settingsMessage" class="settings-message"></span><button type="submit">▣ Salvar parâmetros</button></div>
+      </form>
+      <form id="companySettingsForm" class="panel settings-card company-settings-card">
+        <div class="panel-heading"><div><span class="panel-kicker">PERSONALIZAÇÃO</span><h2>Dados da empresa</h2><p class="muted">Informações usadas no PDF do orçamento e nas mensagens compartilhadas.</p></div><div class="panel-icon">▣</div></div>
+        <div class="company-settings-layout">
+          <div class="company-logo-field"><span>Logomarca</span><div id="companyLogoPreview" class="company-logo-preview">SUA LOGO</div><label class="logo-upload-button">Trocar imagem<input id="companyLogoFile" type="file" accept="image/png,image/jpeg"></label><small>PNG ou JPG, até 1,5 MB.</small></div>
+          <div class="settings-grid company-fields">
+            <label>Nome completo do responsável<input id="companyResponsible" maxlength="140"></label>
+            <label>Nome da empresa<input id="companyName" maxlength="140"></label>
+            <label>CNPJ / CPF<input id="companyTaxId" maxlength="20"></label>
+            <label>Telefone / WhatsApp<input id="companyPhone" maxlength="30"></label>
+            <label>E-mail comercial<input id="companyEmail" type="email" maxlength="140"></label>
+            <label>Redes sociais / website<input id="companyWebsite" maxlength="250"></label>
+            <label class="full-setting-field">Endereço completo<input id="companyAddress" maxlength="300"></label>
+          </div>
+        </div>
+        <div class="form-actions"><span id="companySettingsMessage" class="settings-message"></span><button type="submit">▣ Salvar dados da empresa</button></div>
+      </form>
+    </section>
+    <section id="historico" class="app-view hidden" data-view="quotes"><div class="section-title"><div><p class="eyebrow">PROJETOS</p><h2>Orçamentos recentes</h2></div><span class="muted">Seu histórico de análises</span></div>
+      <div class="panel table-wrap"><table><thead><tr><th>Arquivo</th><th>Cliente</th><th>Tempo</th><th>Filamento</th><th>Total</th><th>Data</th></tr></thead><tbody id="history"></tbody></table><p id="empty" class="empty">Nenhum orçamento ainda. Envie seu primeiro G-code acima.</p></div>
+    </section>
+    <section id="relatorios" class="app-view hidden support-reports-section" data-view="supportReports">
+      <div class="section-title"><div><p class="eyebrow">SUPORTE DA PLATAFORMA</p><h2>Relatórios de bugs</h2><p class="muted">Acesso exclusivo do administrador geral.</p></div><button id="refreshSupportReports" type="button">↻ Atualizar</button></div>
+      <div class="support-report-stats"><article class="floating-stat"><span>ABERTOS</span><strong id="supportOpenCount">0</strong></article><article class="floating-stat"><span>EM ANÁLISE</span><strong id="supportAnalyzingCount">0</strong></article><article class="floating-stat"><span>RESOLVIDOS</span><strong id="supportResolvedCount">0</strong></article></div>
+      <div class="panel support-report-toolbar"><input id="supportReportSearch" type="search" placeholder="Buscar por usuário, e-mail ou descrição..."><select id="supportReportFilter"><option value="">Todos os status</option><option value="OPEN">Aberto</option><option value="ANALYZING">Em análise</option><option value="RESOLVED">Resolvido</option></select></div>
+      <p id="supportReportMessage" class="settings-message"></p><div id="supportReportList" class="support-report-list"></div>
+    </section>
+  </main>
+</div>
+<dialog id="filamentDialog" class="app-dialog"><form id="filamentForm"><div class="dialog-head"><div><p class="eyebrow">ESTOQUE</p><h2 id="filamentDialogTitle">Novo filamento</h2></div><button type="button" class="dialog-close" data-close="filamentDialog">×</button></div>
+  <input id="filamentId" type="hidden"><div class="dialog-grid"><label>Material<input id="filamentMaterial" maxlength="60" placeholder="PLA, ABS, PETG..." required></label><label>Cor<input id="filamentColor" maxlength="60" placeholder="Azul" required></label><label>Marca<input id="filamentBrand" maxlength="100" placeholder="Creality" required></label><label>Peso atual (g)<input id="filamentWeight" type="number" min="0" max="1000000" required></label><label>Preço por kg (R$)<input id="filamentPrice" class="brl-input" inputmode="decimal" required placeholder="0,00"></label></div><p id="filamentError" class="error"></p><div class="form-actions"><button type="button" class="ghost" data-close="filamentDialog">Cancelar</button><button type="submit">Salvar filamento</button></div>
+</form></dialog>
+<dialog id="movementDialog" class="app-dialog small-dialog"><form id="movementForm"><div class="dialog-head"><div><p class="eyebrow">MOVIMENTAÇÃO</p><h2 id="movementTitle">Adicionar filamento</h2></div><button type="button" class="dialog-close" data-close="movementDialog">×</button></div><input id="movementFilamentId" type="hidden"><input id="movementType" type="hidden"><label>Quantidade em gramas<input id="movementGrams" type="number" min="1" max="1000000" required></label><label>Observação<input id="movementNote" maxlength="200" placeholder="Opcional"></label><p id="movementError" class="error"></p><div class="form-actions"><button type="button" class="ghost" data-close="movementDialog">Cancelar</button><button type="submit">Confirmar</button></div></form></dialog>
+<dialog id="historyDialog" class="app-dialog"><div class="dialog-head"><div><p class="eyebrow">MOVIMENTAÇÕES</p><h2 id="historyTitle">Histórico do filamento</h2></div><button type="button" class="dialog-close" data-close="historyDialog">×</button></div><div id="movementHistory" class="movement-history"></div></dialog>
+<dialog id="consumableDialog" class="app-dialog"><form id="consumableForm"><div class="dialog-head"><div><p class="eyebrow">CONSUMÍVEIS</p><h2 id="consumableDialogTitle">Novo consumível</h2></div><button type="button" class="dialog-close" data-close="consumableDialog">×</button></div>
+  <input id="consumableId" type="hidden"><div class="dialog-grid">
+    <label>Categoria<select id="consumableCategory"><option value="MAGNET">Ímã</option><option value="GLUE">Cola / adesivo</option><option value="RESIN">Resina</option><option value="HARDWARE">Parafuso / ferragem</option><option value="PACKAGING">Embalagem</option><option value="PAINT">Tinta / acabamento</option><option value="OTHER">Outro</option></select></label>
+    <label>Nome<input id="consumableName" maxlength="120" required placeholder="Ex.: Ímã de neodímio 6x2 mm"></label><label>Marca<input id="consumableBrand" maxlength="100" placeholder="Opcional"></label>
+    <label>Unidade<select id="consumableUnit"><option value="UNIT">Unidade</option><option value="G">Grama</option><option value="KG">Quilograma</option><option value="ML">Mililitro</option><option value="L">Litro</option><option value="M">Metro</option></select></label>
+    <label>Quantidade<input id="consumableQuantity" type="number" min="0" max="99999999999" step="0.001" required></label><label>Preço por unidade (R$)<input id="consumableUnitPrice" class="brl-input" inputmode="decimal" required placeholder="0,00"></label>
+  </div><label>Observações<textarea id="consumableNotes" maxlength="300" rows="3"></textarea></label><p id="consumableError" class="error"></p><div class="form-actions"><button type="button" class="ghost" data-close="consumableDialog">Cancelar</button><button type="submit">Salvar consumível</button></div>
+</form></dialog>
+<dialog id="customerDialog" class="app-dialog customer-dialog"><form id="customerForm"><div class="dialog-head"><div><p class="eyebrow">CLIENTES</p><h2 id="customerDialogTitle">Novo cliente</h2></div><button type="button" class="dialog-close" data-close="customerDialog">×</button></div>
+  <input id="customerId" type="hidden"><div class="form-section-title">Identificação</div><div class="dialog-grid">
+    <label>Tipo de pessoa<select id="customerPersonType"><option value="PF">Pessoa física</option><option value="PJ">Pessoa jurídica</option></select></label><label>Nome / Razão social<input id="customerName" maxlength="140" required></label>
+    <label>Nome fantasia<input id="customerTradeName" maxlength="140"></label><label>CPF / CNPJ<input id="customerDocument" maxlength="20"></label><label>Inscrição estadual<input id="customerStateRegistration" maxlength="20"></label><label class="check-label"><input id="customerActiveField" type="checkbox" checked> Cliente ativo</label>
+  </div><div class="form-section-title">Contato</div><div class="dialog-grid"><label>E-mail<input id="customerEmail" type="email" maxlength="140"></label><label>Telefone<input id="customerPhone" maxlength="30"></label><label>WhatsApp<input id="customerWhatsapp" maxlength="30"></label></div>
+  <div class="form-section-title">Endereço</div><div class="dialog-grid"><label>CEP<input id="customerPostalCode" maxlength="12"></label><label>Logradouro<input id="customerStreet" maxlength="140"></label><label>Número<input id="customerAddressNumber" maxlength="20"></label><label>Complemento<input id="customerComplement" maxlength="100"></label><label>Bairro<input id="customerDistrict" maxlength="100"></label><label>Cidade<input id="customerCity" maxlength="100"></label><label>UF<input id="customerState" maxlength="2"></label></div>
+  <div class="form-section-title">Observações</div><label>Informações adicionais<textarea id="customerNotes" maxlength="500" rows="3"></textarea></label><p id="customerError" class="error"></p><div class="form-actions"><button type="button" class="ghost" data-close="customerDialog">Cancelar</button><button type="submit">Salvar cliente</button></div>
+</form></dialog>
+<dialog id="productDialog" class="app-dialog product-dialog"><form id="productForm"><h2 id="productDialogTitle">Novo produto</h2><input id="productId" type="hidden"><div class="dialog-grid"><label>Nome<input id="productName" maxlength="140" required></label><label>Categoria<input id="productCategory" maxlength="80" value="Decoração" required></label><label>Preço de venda (R$)<input id="productPrice" class="brl-input" inputmode="decimal" value="0,00" required></label><label>Custo técnico (R$)<input id="productTechnicalCost" class="brl-input" inputmode="decimal" value="0,00" required><small>Material, máquina, energia e mão de obra.</small></label><label>Cores disponíveis<input id="productColors" maxlength="500" placeholder="Azul, Preto, Branco"></label><label>Tamanhos disponíveis<input id="productSizes" maxlength="500" placeholder="P, M, G ou 10 cm, 20 cm"></label><label class="wide">Descrição<textarea id="productDescription" rows="4" maxlength="1000"></textarea></label><label>Foto principal<input class="product-image-file" data-image-slot="0" type="file" accept="image/png,image/jpeg"></label><label>Foto 2<input class="product-image-file" data-image-slot="1" type="file" accept="image/png,image/jpeg"></label><label>Foto 3<input class="product-image-file" data-image-slot="2" type="file" accept="image/png,image/jpeg"></label><label class="check-label"><input id="productPublishedCheck" type="checkbox" checked> Publicar no catálogo</label><label class="check-label"><input id="productFeatured" type="checkbox"> Destacar produto</label></div><div id="productImagePreview" class="product-image-preview product-gallery-preview">Sem imagens</div><p id="productMarginPreview" class="field-help">Margem estimada: R$ 0,00</p><p id="productError" class="error"></p><div class="form-actions"><button type="button" class="ghost" data-close="productDialog">Cancelar</button><button type="submit">Salvar produto</button></div></form></dialog>
+<dialog id="productionDetailDialog" class="app-dialog production-detail-dialog"><div class="dialog-head"><div><p class="eyebrow">ORÇAMENTO</p><h2 id="productionDetailTitle">Detalhes</h2></div><button type="button" class="dialog-close" data-close="productionDetailDialog">×</button></div><div id="productionDetailBody"></div><div class="form-actions"><button type="button" class="ghost" data-close="productionDetailDialog">Fechar</button><button id="productionDetailPdf" type="button">▤ Baixar PDF</button><button id="productionDetailWhatsapp" type="button">◉ WhatsApp</button></div></dialog>
+<dialog id="productionEditDialog" class="app-dialog"><form id="productionEditForm"><div class="dialog-head"><div><p class="eyebrow">EDITAR</p><h2>Alterar orçamento</h2></div><button type="button" class="dialog-close" data-close="productionEditDialog">×</button></div><input id="productionEditId" type="hidden"><div class="dialog-grid"><label class="wide">Título<input id="productionEditTitle" maxlength="140" required></label><label>Cliente<select id="productionEditCustomer"></select></label><label>Preço final (R$)<input id="productionEditTotal" class="brl-input" inputmode="decimal" required></label><label>Status<select id="productionEditStatus"><option value="DRAFT">Orçamento</option><option value="PRODUCTION">Na fila</option><option value="PRINTING">Imprimindo</option><option value="PAUSED">Pausada</option><option value="COMPLETED">Concluída</option><option value="CANCELLED">Cancelada</option></select></label></div><p id="productionEditError" class="error"></p><div class="form-actions"><button type="button" class="ghost" data-close="productionEditDialog">Cancelar</button><button type="submit">Salvar alterações</button></div></form></dialog>
+<dialog id="feedbackDialog" class="app-dialog feedback-dialog"><form id="feedbackForm"><div class="dialog-head"><div><p class="eyebrow">AJUDE A MELHORAR</p><h2>Reportar bug ou erro</h2><p class="muted">Conte o que aconteceu e, se possível, envie uma captura da tela.</p></div><button type="button" class="dialog-close" data-close="feedbackDialog">×</button></div>
+  <label>Descrição do problema<textarea id="feedbackDescription" minlength="10" maxlength="3000" rows="6" required placeholder="Explique o que você estava fazendo, o que esperava e o que aconteceu."></textarea><small><span id="feedbackCount">0</span>/3000 caracteres</small></label>
+  <label>Captura de tela (opcional)<input id="feedbackScreenshot" type="file" accept="image/png,image/jpeg,image/webp"><small>PNG, JPEG ou WebP, até 5 MB. Não inclua senhas ou dados confidenciais.</small></label>
+  <div id="feedbackPreview" class="feedback-preview hidden"></div><p id="feedbackError" class="error"></p>
+  <div class="form-actions"><button type="button" class="ghost" data-close="feedbackDialog">Cancelar</button><button id="feedbackSubmit" type="submit">Enviar relatório</button></div>
+</form></dialog>
+<div id="moduleToast" class="module-toast hidden"></div><script src="/js/app.js"></script></body></html>

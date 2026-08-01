@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: orcamento-3d
+  datasource:
+    url: ${DB_URL:jdbc:h2:file:./data/orcamento3d}
+    username: ${DB_USER:sa}
+    password: ${DB_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: never
+app:
+  encryption:
+    secret: ${DATA_ENCRYPTION_KEY:chave-local-de-desenvolvimento-nao-utilizar-em-producao-2026}
+  auth:
+    secure-cookie: false
+  jwt:
+    secret: ${JWT_SECRET:troque-esta-chave-em-producao-com-pelo-menos-32-bytes}
+    expiration-seconds: 28800
+  admin:
+    initial-password: ${ADMIN_INITIAL_PASSWORD:}
+  support:
+    admin-emails: ${SUPPORT_ADMIN_EMAILS:}

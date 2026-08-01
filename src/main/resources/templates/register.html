@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Criar conta · Orçamento 3D</title><link rel="stylesheet" href="/css/app.css">
+</head><body class="auth-page"><main class="auth-card">
+  <a class="logo" href="/"><span class="logo-mark">3D</span><span>ORÇA<strong>PRINT</strong></span></a>
+  <h1>Criar conta</h1><p class="muted">Comece a calcular seus projetos.</p>
+  <form id="form">
+    <label>Nome<input id="name" maxlength="100" required></label>
+    <label>E-mail<input id="email" type="email" required></label>
+    <label>Senha<input id="password" type="password" minlength="8" required></label>
+    <p id="error" class="error"></p><button type="submit">Cadastrar</button>
+  </form><p class="foot">Já tem uma conta? <a href="/login">Entrar</a></p>
+</main><script>
+document.querySelector('#form').addEventListener('submit', async e=>{
+ e.preventDefault(); const r=await fetch('/api/auth/register',{method:'POST',
+ headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name.value,email:email.value,password:password.value})});
+ const data=await r.json(); if(!r.ok){error.textContent=data.message||'Confira os dados.';return}
+ delete data.token;localStorage.removeItem('token');localStorage.setItem('profile',JSON.stringify(data));location.href='/app';
+});</script></body></html>

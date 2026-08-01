@@ -1,0 +1,14 @@
+FROM maven:3.9.11-eclipse-temurin-21 AS build
+WORKDIR /app
+COPY pom.xml .
+RUN mvn -q -DskipTests dependency:go-offline
+COPY src src
+RUN mvn -q verify
+
+FROM eclipse-temurin:21-jre-noble
+WORKDIR /app
+RUN groupadd --system spring && useradd --system --gid spring --uid 10001 spring
+COPY --from=build /app/target/orcamento-3d-*.jar app.jar
+USER spring
+EXPOSE 8080
+ENTRYPOINT ["java","-XX:MaxRAMPercentage=75.0","-XX:+ExitOnOutOfMemoryError","-jar","app.jar"]

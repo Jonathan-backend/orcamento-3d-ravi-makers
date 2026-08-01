@@ -1,0 +1,6 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Entrando...</title><link rel="stylesheet" href="/css/app.css"></head>
+<body class="auth-page"><main class="auth-card"><h1>Concluindo acesso</h1><p class="muted">Validando sua conta Google...</p></main>
+<script>
+const p=new URLSearchParams(location.hash.slice(1)),role=p.get('role');
+if(!role)location.replace('/entrar?oauth_error=callback');else{const profile={name:p.get('name'),email:p.get('email'),role};localStorage.removeItem('token');localStorage.setItem('profile',JSON.stringify(profile));history.replaceState({},'',location.pathname);location.replace(role==='CUSTOMER'?'/cliente':'/app')}
+</script></body></html>

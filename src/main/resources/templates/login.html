@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Acessar · RAVI MAKERS</title><link rel="stylesheet" href="/css/app.css"><link rel="stylesheet" href="/css/brand.css">
+</head>
+<body class="auth-page">
+<main class="auth-shell">
+  <a class="auth-logo auth-mobile-logo ravi-brand-logo" href="/" aria-label="RAVI MAKERS"></a>
+  <section class="auth-card">
+    <div id="loginView">
+      <a class="auth-card-logo ravi-brand-logo" href="/" aria-label="RAVI MAKERS"></a>
+      <div class="auth-card-heading"><h1>Entrar</h1><p class="muted">Acesse o painel de gestão RAVI MAKERS</p></div>
+      <button class="oauth-button" id="googleLogin" type="button"><span class="google-mark">G</span>Continuar com o Google</button>
+      <div class="auth-divider"><span>OU COM E-MAIL</span></div>
+      <form id="loginForm">
+        <label>E-mail<input id="loginEmail" type="email" autocomplete="email" placeholder="voce@exemplo.com" required></label>
+        <label>Senha<input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••" required></label>
+        <p id="loginError" class="error"></p><button type="submit">Entrar</button>
+      </form>
+      <div class="auth-divider"><span>NOVO POR AQUI?</span></div>
+      <div class="signup-callout"><strong>Você ainda não tem uma conta?</strong><p>Crie sua conta de administrador para configurar sua operação.</p><button type="button" id="showRegister">Criar conta de administrador</button></div>
+    </div>
+
+    <div id="registerView" class="hidden">
+      <button class="back-auth" type="button" id="showLogin">← Voltar para entrar</button>
+      <div class="auth-card-heading"><h1>Criar conta</h1><p class="muted">Cadastre o administrador da sua operação 3D.</p></div>
+      <button class="oauth-button" id="googleRegister" type="button"><span class="google-mark">G</span>Criar com o Google</button>
+      <div class="auth-divider"><span>OU COM E-MAIL</span></div>
+      <form id="registerForm">
+        <label>Nome<input id="registerName" maxlength="100" autocomplete="name" placeholder="Seu nome" required></label>
+        <label>E-mail<input id="registerEmail" type="email" autocomplete="email" placeholder="voce@exemplo.com" required></label>
+        <label>Senha<input id="registerPassword" type="password" minlength="10" pattern="(?=.*[A-Za-z])(?=.*\d).{10,72}" autocomplete="new-password" placeholder="Mínimo de 10 caracteres, com letra e número" required></label>
+        <p id="registerError" class="error"></p><button type="submit">Criar conta de administrador</button>
+      </form>
+    </div>
+    <p id="oauthNotice" class="oauth-notice hidden">O acesso pelo Google será ativado após configurar as credenciais OAuth. Use e-mail e senha por enquanto.</p>
+  </section>
+  <p class="auth-legal">Ao continuar, você concorda com os termos de uso e a política de privacidade.</p>
+</main>
+<script>
+if(localStorage.getItem('profile')){const saved=JSON.parse(localStorage.getItem('profile')||'{}');location.href=saved.role==='CUSTOMER'?'/cliente':'/app'}
+const loginView=document.querySelector('#loginView'),registerView=document.querySelector('#registerView'),notice=document.querySelector('#oauthNotice');
+function mode(register){loginView.classList.toggle('hidden',register);registerView.classList.toggle('hidden',!register);notice.classList.add('hidden');const p=new URLSearchParams(location.search);register?p.set('mode','register'):p.delete('mode');history.replaceState({},'',`${location.pathname}${p.size?'?'+p:''}`);}
+document.querySelector('#showRegister').onclick=()=>mode(true);
+document.querySelector('#showLogin').onclick=()=>mode(false);
+if(new URLSearchParams(location.search).get('mode')==='register'||location.pathname==='/register')mode(true);
+[document.querySelector('#googleLogin'),document.querySelector('#googleRegister')].forEach(button=>button.onclick=()=>location.href='/oauth2/authorization/google');
+document.querySelector('#loginForm').addEventListener('submit',async e=>{
+ e.preventDefault();const error=document.querySelector('#loginError');error.textContent='';
+ try{const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:loginEmail.value,password:loginPassword.value})});
+ if(!r.ok){error.textContent='E-mail ou senha inválidos.';return}const data=await r.json();save(data)}
+ catch(e){error.textContent='Servidor indisponível. Tente novamente.'}
+});
+document.querySelector('#registerForm').addEventListener('submit',async e=>{
+ e.preventDefault();const error=document.querySelector('#registerError');error.textContent='';
+ try{const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:registerName.value,email:registerEmail.value,password:registerPassword.value})});
+ const data=await r.json();if(!r.ok){error.textContent=data.message||'Confira os dados informados.';return}save(data)}
+ catch(e){error.textContent='Servidor indisponível. Tente novamente.'}
+});
+function save(data){delete data.token;localStorage.removeItem('token');localStorage.setItem('profile',JSON.stringify(data));const back=new URLSearchParams(location.search).get('return');location.href=back&&back.startsWith('/')&&!back.startsWith('//')?back:(data.role==='CUSTOMER'?'/cliente':'/app')}
+</script>
+</body></html>
