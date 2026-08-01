@@ -29,19 +29,19 @@ class ProductImageSecurityTest {
     }
 
     @Test
-    void acceptsFiveMegabytesAndRejectsAnythingLarger() {
-        byte[] allowed = new byte[5_000_000];
+    void acceptsTenMegabytesAndRejectsAnythingLarger() {
+        byte[] allowed = new byte[10_000_000];
         allowed[0] = (byte) 137; allowed[1] = 80; allowed[2] = 78; allowed[3] = 71;
         allowed[4] = 13; allowed[5] = 10; allowed[6] = 26; allowed[7] = 10;
         String allowedImage = "data:image/png;base64," + Base64.getEncoder().encodeToString(allowed);
         assertThat(validate(allowedImage)).isEqualTo(allowedImage);
 
-        byte[] oversized = new byte[5_000_001];
+        byte[] oversized = new byte[10_000_001];
         System.arraycopy(allowed, 0, oversized, 0, allowed.length);
         String oversizedImage = "data:image/png;base64," + Base64.getEncoder().encodeToString(oversized);
         assertThatThrownBy(() -> validate(oversizedImage))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("5 MB");
+                .hasMessageContaining("10 MB");
     }
 
     private String validate(String value) {
