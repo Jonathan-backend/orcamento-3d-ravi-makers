@@ -14,6 +14,8 @@ import java.util.Set;
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class ProductionSecurityValidator implements ApplicationRunner {
+    // Uma chave aleatória de 256 bits em Base64 tem 43 ou 44 caracteres.
+    private static final int MINIMUM_RANDOM_SECRET_LENGTH = 43;
     private static final Set<String> UNSAFE_VALUES = Set.of(
             "troque-esta-chave-em-producao-com-pelo-menos-32-bytes",
             "gere-uma-chave-aleatoria-segura-com-ao-menos-32-bytes",
@@ -35,12 +37,13 @@ public class ProductionSecurityValidator implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         if (!environment.matchesProfiles("prod")) return;
         String normalized = jwtSecret == null ? "" : jwtSecret.trim().toLowerCase(Locale.ROOT);
-        if (jwtSecret == null || jwtSecret.length() < 48 || UNSAFE_VALUES.contains(normalized)) {
+        if (jwtSecret == null || jwtSecret.length() < MINIMUM_RANDOM_SECRET_LENGTH
+                || UNSAFE_VALUES.contains(normalized)) {
             throw new IllegalStateException(
-                    "JWT_SECRET inseguro. Em produção, configure um segredo aleatório com pelo menos 48 caracteres.");
+                    "JWT_SECRET inseguro. Em produção, configure um segredo aleatório de pelo menos 256 bits.");
         }
         String normalizedEncryption = encryptionSecret == null ? "" : encryptionSecret.trim().toLowerCase(Locale.ROOT);
-        if (encryptionSecret == null || encryptionSecret.length() < 48
+        if (encryptionSecret == null || encryptionSecret.length() < MINIMUM_RANDOM_SECRET_LENGTH
                 || UNSAFE_VALUES.contains(normalizedEncryption)
                 || encryptionSecret.equals(jwtSecret)) {
             throw new IllegalStateException(
