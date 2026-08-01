@@ -41,6 +41,7 @@
 <script>
 if(localStorage.getItem('profile')){const saved=JSON.parse(localStorage.getItem('profile')||'{}');location.href=saved.role==='CUSTOMER'?'/cliente':'/app'}
 const loginView=document.querySelector('#loginView'),registerView=document.querySelector('#registerView'),notice=document.querySelector('#oauthNotice');
+if(new URLSearchParams(location.search).get('inactive')==='1')document.querySelector('#loginError').textContent='Sua sessão foi encerrada após 30 minutos sem atividade.';
 function mode(register){loginView.classList.toggle('hidden',register);registerView.classList.toggle('hidden',!register);notice.classList.add('hidden');const p=new URLSearchParams(location.search);register?p.set('mode','register'):p.delete('mode');history.replaceState({},'',`${location.pathname}${p.size?'?'+p:''}`);}
 document.querySelector('#showRegister').onclick=()=>mode(true);
 document.querySelector('#showLogin').onclick=()=>mode(false);

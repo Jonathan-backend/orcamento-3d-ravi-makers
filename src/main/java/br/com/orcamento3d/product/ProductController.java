@@ -13,6 +13,7 @@ import java.util.*;
 
 @RestController
 public class ProductController {
+ private static final int MAX_PRODUCT_IMAGE_BYTES=5_000_000;
  private final ProductRepository products;private final UserRepository users;private final CompanyProfileRepository companies;private final CouponRepository coupons;
  public ProductController(ProductRepository p,UserRepository u,CompanyProfileRepository c,CouponRepository cp){products=p;users=u;companies=c;coupons=cp;}
  public record Request(@NotBlank @Size(max=140) String name,@Size(max=1000) String description,
@@ -62,7 +63,7 @@ public class ProductController {
   byte[] bytes;
   try{bytes=Base64.getDecoder().decode(image.substring(comma+1));}
   catch(IllegalArgumentException e){throw new IllegalArgumentException("Imagem inválida");}
-  if(bytes.length>1_500_000)throw new IllegalArgumentException("Cada imagem deve ter no máximo 1,5 MB");
+  if(bytes.length>MAX_PRODUCT_IMAGE_BYTES)throw new IllegalArgumentException("Cada imagem deve ter no máximo 5 MB");
   boolean signature=header.contains("png")?isPng(bytes):header.contains("jpeg")?isJpeg(bytes):isWebp(bytes);
   if(!signature)throw new IllegalArgumentException("O conteúdo da imagem não corresponde ao formato informado");
   return image;

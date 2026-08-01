@@ -4,7 +4,25 @@ const isOperator=false;
 let supportAdmin=false;
 userName.textContent=profile.name||profile.email;role.textContent='Administrador';
 avatar.textContent=(profile.name||profile.email||'OP').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();
-logout.onclick=async()=>{try{await fetch('/api/auth/logout',{method:'POST'})}finally{localStorage.clear();location.href='/login'}};
+async function performLogout(reason=''){
+ try{await fetch('/api/auth/logout',{method:'POST'})}
+ finally{localStorage.clear();location.href=reason?`/login?${reason}=1`:'/login'}
+}
+logout.onclick=()=>performLogout();
+const IDLE_TIMEOUT_MS=30*60*1000,IDLE_WARNING_MS=2*60*1000,ACTIVITY_KEY='ravi_last_activity';
+let lastActivityWrite=0,idleWarningShown=false,idleLogoutStarted=false;
+function registerActivity(){
+ const now=Date.now();if(now-lastActivityWrite<15000)return;lastActivityWrite=now;idleWarningShown=false;localStorage.setItem(ACTIVITY_KEY,String(now));
+}
+function checkIdleSession(){
+ const last=Number(localStorage.getItem(ACTIVITY_KEY)||Date.now()),idleFor=Date.now()-last;
+ if(idleFor>=IDLE_TIMEOUT_MS&&!idleLogoutStarted){idleLogoutStarted=true;performLogout('inactive');return}
+ if(idleFor>=IDLE_TIMEOUT_MS-IDLE_WARNING_MS&&!idleWarningShown){idleWarningShown=true;notify('Sua sessão será encerrada em 2 minutos por inatividade. Interaja com a página para continuar.','error')}
+}
+['pointerdown','keydown','scroll','touchstart'].forEach(eventName=>addEventListener(eventName,registerActivity,{passive:true}));
+addEventListener('storage',event=>{if(event.key===ACTIVITY_KEY)idleWarningShown=false});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkIdleSession()});
+registerActivity();setInterval(checkIdleSession,15000);
 menuButton.onclick=()=>document.querySelector('.sidebar').classList.toggle('open');
 const hashViews={painel:'dashboard',estoque:'inventory',clientes:'customers',orcamento:'quote',producao:'production',catalogo:'catalog',produtos:'products',impressoras:'printers',historico:'quotes',configuracoes:'settings',relatorios:'supportReports'};
 function routeView(){
@@ -372,7 +390,7 @@ function renderProducts(){
 async function loadProducts(){let r;try{r=await api('/api/products')}catch(e){return}productCache=await r.json();if(!r.ok)return;renderProducts()}
 async function loadCatalogInfo(){let r;try{r=await api('/api/products/catalog-info')}catch(e){return}const c=await r.json();if(!r.ok)return;const link=`${location.origin}/catalogo/${c.ownerId}`;catalogPublicLink.value=link;openCatalogLink.href=link;catalogPublishedCount.textContent=c.products.length}
 newProduct.onclick=()=>{resetProductForm();productDialog.showModal();productName.focus()};
-document.querySelectorAll('.product-image-file').forEach(input=>input.onchange=()=>{const file=input.files[0],slot=Number(input.dataset.imageSlot);if(!file)return;if(file.size>1500000){productError.textContent='Cada imagem deve ter no máximo 1,5 MB.';input.value='';return}const reader=new FileReader();reader.onload=()=>{productImages[slot]=reader.result;renderProductImage()};reader.readAsDataURL(file)});
+document.querySelectorAll('.product-image-file').forEach(input=>input.onchange=()=>{const file=input.files[0],slot=Number(input.dataset.imageSlot);if(!file)return;if(file.size>5000000){productError.textContent='Cada imagem deve ter no máximo 5 MB.';input.value='';return}const reader=new FileReader();reader.onload=()=>{productImages[slot]=reader.result;renderProductImage()};reader.readAsDataURL(file)});
 productPrice.addEventListener('input',updateProductMargin);productTechnicalCost.addEventListener('input',updateProductMargin);
 productForm.onsubmit=async e=>{e.preventDefault();const id=productId.value,body={name:productName.value,category:productCategory.value,price:brlValue(productPrice),technicalCost:brlValue(productTechnicalCost),colors:productColors.value,sizes:productSizes.value,description:productDescription.value,imageDataUrl:productImages[0],image2DataUrl:productImages[1],image3DataUrl:productImages[2],published:productPublishedCheck.checked,featured:productFeatured.checked};const r=await api(id?`/api/products/${id}`:'/api/products',{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}),data=await r.json();if(!r.ok){productError.textContent=data.message||'Não foi possível salvar o produto';return}productDialog.close();await loadProducts();await loadCatalogInfo()};
 productGrid.onclick=async e=>{const button=e.target.closest('[data-product-action]');if(!button)return;const p=productCache.find(x=>x.id===Number(button.dataset.id));if(button.dataset.productAction==='edit'){productId.value=p.id;productName.value=p.name;productCategory.value=p.category;productPrice.value=brlText(p.price);productTechnicalCost.value=brlText(p.technicalCost);productColors.value=p.colors||'';productSizes.value=p.sizes||'';productDescription.value=p.description||'';productPublishedCheck.checked=p.published;productFeatured.checked=p.featured;productImages=[p.imageDataUrl,p.image2DataUrl,p.image3DataUrl];renderProductImage();updateProductMargin();productDialogTitle.textContent='Editar produto';productError.textContent='';productDialog.showModal();return}if(button.dataset.productAction==='delete'&&confirm(`Excluir o produto “${p.name}”?`)){await api(`/api/products/${p.id}`,{method:'DELETE'});await loadProducts();await loadCatalogInfo()}};
