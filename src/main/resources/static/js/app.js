@@ -551,4 +551,52 @@ supportReportList?.addEventListener('click',async event=>{
 });
 function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 function safeHttpUrl(value){try{const url=new URL(String(value||''));return ['http:','https:'].includes(url.protocol)?url.href:''}catch{return ''}}
+
+const onboarding={
+ steps:[
+  {target:'.dashboard-heading',title:'Bem-vindo à RAVI MAKERS',text:'Este painel reúne os números mais importantes da sua operação de impressão 3D.'},
+  {target:'[data-view-link="inventory"]',title:'Organize seu estoque',text:'Cadastre filamentos, acompanhe quantidades e mantenha os custos de material atualizados.'},
+  {target:'[data-view-link="quote"]',title:'Calcule novos projetos',text:'Envie arquivos G-code para calcular material, tempo, custos e preço de venda.'},
+  {target:'[data-view-link="production"]',title:'Acompanhe a produção',text:'Veja o que está na fila, em impressão ou concluído e controle os prazos de entrega.'},
+  {target:'[data-view-link="settings"]',title:'Configure sua operação',text:'Defina energia, mão de obra, margem, manutenção e os dados da sua empresa.'},
+  {target:'#openFeedback',title:'Conte com o suporte',text:'Se encontrar algum problema, envie uma descrição e uma captura de tela por aqui.'}
+ ],
+ index:0,active:false,
+ key:'ravi_onboarding_v1',
+ start(force=false){
+  if(!force&&document.cookie.split('; ').includes(`${this.key}=done`))return;
+  this.active=true;this.index=0;this.ensureUi();this.show();
+ },
+ ensureUi(){
+  if(document.getElementById('onboardingCard'))return;
+  document.body.insertAdjacentHTML('beforeend',`<div id="onboardingShade" class="onboarding-shade hidden"></div><div id="onboardingFocus" class="onboarding-focus hidden"></div><section id="onboardingCard" class="onboarding-card hidden" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle"><div class="onboarding-progress"><span id="onboardingStep"></span><button id="onboardingSkip" type="button">Pular tutorial</button></div><h2 id="onboardingTitle"></h2><p id="onboardingText"></p><div class="onboarding-dots" id="onboardingDots"></div><div class="onboarding-actions"><button id="onboardingBack" class="ghost" type="button">Voltar</button><button id="onboardingNext" type="button">Próximo</button></div></section>`);
+  onboardingBack.onclick=()=>this.move(-1);onboardingNext.onclick=()=>this.move(1);onboardingSkip.onclick=()=>this.finish();
+  window.addEventListener('resize',()=>this.active&&this.position());
+  document.addEventListener('keydown',event=>{if(!this.active)return;if(event.key==='Escape')this.finish();if(event.key==='ArrowRight')this.move(1);if(event.key==='ArrowLeft')this.move(-1)});
+ },
+ show(){
+  const step=this.steps[this.index],target=document.querySelector(step.target);if(!target){this.move(1);return}
+  if(innerWidth<=960&&target.closest('.sidebar'))document.querySelector('.sidebar').classList.add('open');
+  onboardingTitle.textContent=step.title;onboardingText.textContent=step.text;onboardingStep.textContent=`PASSO ${this.index+1} DE ${this.steps.length}`;
+  onboardingDots.innerHTML=this.steps.map((_,i)=>`<i class="${i===this.index?'active':''}"></i>`).join('');
+  onboardingBack.disabled=this.index===0;onboardingNext.textContent=this.index===this.steps.length-1?'Concluir':'Próximo';
+  onboardingShade.classList.remove('hidden');onboardingFocus.classList.remove('hidden');onboardingCard.classList.remove('hidden');
+  target.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>this.position(),260);
+ },
+ position(){
+  const target=document.querySelector(this.steps[this.index].target);if(!target)return;const rect=target.getBoundingClientRect(),pad=7,focus=onboardingFocus,card=onboardingCard;
+  Object.assign(focus.style,{left:`${Math.max(5,rect.left-pad)}px`,top:`${Math.max(5,rect.top-pad)}px`,width:`${Math.min(innerWidth-10,rect.width+pad*2)}px`,height:`${Math.min(innerHeight-10,rect.height+pad*2)}px`});
+  const cardWidth=Math.min(390,innerWidth-24),spaceBelow=innerHeight-rect.bottom,top=spaceBelow>290?rect.bottom+18:Math.max(12,rect.top-card.offsetHeight-18);
+  Object.assign(card.style,{width:`${cardWidth}px`,left:`${Math.min(Math.max(12,rect.left),innerWidth-cardWidth-12)}px`,top:`${top}px`});
+ },
+ move(delta){
+  const next=this.index+delta;if(next<0)return;if(next>=this.steps.length){this.finish();return}this.index=next;this.show();
+ },
+ finish(){
+  this.active=false;document.cookie=`${this.key}=done; Max-Age=31536000; Path=/; SameSite=Lax; Secure`;
+  onboardingShade?.classList.add('hidden');onboardingFocus?.classList.add('hidden');onboardingCard?.classList.add('hidden');document.querySelector('.sidebar').classList.remove('open');
+ }
+};
+document.getElementById('openTutorial')?.addEventListener('click',()=>onboarding.start(true));
 routeView();initializeSupportAccess();load();loadPrinters();loadInventory();loadConsumables();loadCustomers();loadPricingSettings();loadCompanySettings();loadProduction();loadProducts();loadCatalogInfo();loadCoupons();setInterval(loadPrinters,15000);
+setTimeout(()=>onboarding.start(),700);
