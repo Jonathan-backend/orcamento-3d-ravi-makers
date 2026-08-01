@@ -16,10 +16,25 @@ services:
       - key: DATA_ENCRYPTION_KEY
         generateValue: true
       - key: DB_URL
-        sync: false
+        fromDatabase:
+          name: orcamento-3d-db
+          property: connectionString
       - key: DB_USER
-        sync: false
+        fromDatabase:
+          name: orcamento-3d-db
+          property: user
       - key: DB_PASSWORD
-        sync: false
+        fromDatabase:
+          name: orcamento-3d-db
+          property: password
       - key: ADMIN_INITIAL_PASSWORD
         sync: false
+
+databases:
+  - name: orcamento-3d-db
+    plan: free
+    region: virginia
+    postgresMajorVersion: "18"
+    databaseName: orcamento3d
+    user: orcamento3d
+    ipAllowList: []
