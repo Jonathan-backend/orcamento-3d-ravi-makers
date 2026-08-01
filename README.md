@@ -31,3 +31,5 @@ Java 21, Spring Boot, Spring Security, PostgreSQL, Thymeleaf, JavaScript, Docker
 Este projeto demonstra conhecimentos em desenvolvimento full stack, modelagem de regras de negócio, segurança, persistência de dados, testes automatizados e implantação de aplicações web.
 
 > Repositório disponibilizado para demonstração técnica e avaliação de portfólio. Todos os direitos reservados.
+>
+> URL da aplicação: https://orcamento-3d.onrender.com/app
