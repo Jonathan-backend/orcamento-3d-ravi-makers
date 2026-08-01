@@ -1,9 +1,4 @@
 spring:
-  datasource:
-    # O Render fornece postgresql://; o driver JDBC requer o prefixo jdbc:.
-    url: jdbc:${DB_URL}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       # Ambiente de testes público: cria/atualiza o esquema no primeiro deploy.
