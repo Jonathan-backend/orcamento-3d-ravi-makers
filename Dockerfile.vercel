@@ -12,4 +12,4 @@ COPY --from=build /app/target/orcamento-3d-*.jar app.jar
 ENV PORT=8080
 USER spring
 EXPOSE 8080
-ENTRYPOINT ["java","-XX:MaxRAMPercentage=75.0","-XX:+ExitOnOutOfMemoryError","-jar","app.jar"]
+CMD ["java","-XX:MaxRAMPercentage=75.0","-XX:+ExitOnOutOfMemoryError","-jar","app.jar"]
