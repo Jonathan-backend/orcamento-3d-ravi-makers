@@ -7,9 +7,19 @@ RUN mvn -q verify
 
 FROM eclipse-temurin:21-jre-noble
 WORKDIR /app
-RUN groupadd --system spring && useradd --system --gid spring --uid 10001 spring
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends nginx \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --system spring \
+    && useradd --system --gid spring --uid 10001 spring
 COPY --from=build /app/target/orcamento-3d-*.jar app.jar
+COPY vercel-nginx.conf /app/vercel-nginx.conf
+COPY vercel-entrypoint.sh /app/vercel-entrypoint.sh
+RUN chmod 755 /app/vercel-entrypoint.sh \
+    && chown -R spring:spring /app \
+    && mkdir -p /var/lib/nginx /var/log/nginx /run \
+    && chown -R spring:spring /var/lib/nginx /var/log/nginx /run
 ENV PORT=8080
 USER spring
 EXPOSE 8080
-CMD ["/opt/java/openjdk/bin/java","-XX:TieredStopAtLevel=1","-XX:MaxRAMPercentage=75.0","-XX:+ExitOnOutOfMemoryError","-jar","app.jar"]
+CMD ["/app/vercel-entrypoint.sh"]
