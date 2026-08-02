@@ -2,6 +2,7 @@ package br.com.orcamento3d.config;
 
 import br.com.orcamento3d.auth.JwtAuthenticationFilter;
 import br.com.orcamento3d.user.UserRepository;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.*;
@@ -22,8 +23,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
     @Bean
-    UserDetailsService userDetailsService(UserRepository users) {
-        return email -> users.findByEmailIgnoreCase(email)
+    UserDetailsService userDetailsService(ObjectProvider<UserRepository> users) {
+        return email -> users.getObject().findByEmailIgnoreCase(email)
                 .map(user -> org.springframework.security.core.userdetails.User
                         .withUsername(user.getEmail()).password(user.getPassword())
                         .roles(user.getRole().name()).disabled(!user.isEnabled()).build())

@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.*;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import br.com.orcamento3d.user.UserRepository;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -17,9 +18,10 @@ import java.util.Arrays;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-    private final UserRepository users;
+    private final ObjectProvider<UserRepository> users;
 
-    public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService, UserRepository users) {
+    public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService,
+                                   ObjectProvider<UserRepository> users) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
         this.users = users;
@@ -38,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String username = jwtService.extractUsername(token);
             UserDetails details = userDetailsService.loadUserByUsername(username);
             if (jwtService.isValid(token, details)) {
-                var account = users.findByEmailIgnoreCase(username).orElseThrow();
+                var account = users.getObject().findByEmailIgnoreCase(username).orElseThrow();
                 String operationalEmail = account.effectiveOwner().getEmail();
                 UserDetails operationalDetails = org.springframework.security.core.userdetails.User
                         .withUsername(operationalEmail).password(details.getPassword())

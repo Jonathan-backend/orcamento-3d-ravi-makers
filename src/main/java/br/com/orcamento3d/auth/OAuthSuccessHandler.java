@@ -12,16 +12,17 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 
 @Component
 public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
-    private final UserRepository users;
+    private final ObjectProvider<UserRepository> users;
     private final PasswordEncoder encoder;
     private final JwtService jwt;
     private final boolean secureCookie;
-    public OAuthSuccessHandler(UserRepository users, PasswordEncoder encoder, JwtService jwt,
+    public OAuthSuccessHandler(ObjectProvider<UserRepository> users, PasswordEncoder encoder, JwtService jwt,
                                @Value("${app.auth.secure-cookie:false}") boolean secureCookie) {
         this.users=users;this.encoder=encoder;this.jwt=jwt;this.secureCookie=secureCookie;
     }
@@ -34,6 +35,7 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         }
         String email=emailAttribute.toString().trim().toLowerCase();
         String name=nameAttribute==null||nameAttribute.toString().isBlank()?email:nameAttribute.toString().trim();
+        UserRepository users=this.users.getObject();
         User user=users.findByEmailIgnoreCase(email).orElseGet(()->{
             User created=new User();created.setEmail(email);created.setName(name);
             created.setPassword(encoder.encode(UUID.randomUUID().toString()+UUID.randomUUID()));
