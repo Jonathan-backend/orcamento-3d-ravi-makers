@@ -19,14 +19,25 @@ public class RenderDataSourceConfig {
             @Value("${DB_URL}") String databaseUrl,
             @Value("${DB_USER}") String username,
             @Value("${DB_PASSWORD}") String password) {
-        URI uri = URI.create(databaseUrl);
-        int port = uri.getPort() > 0 ? uri.getPort() : 5432;
-        String jdbcUrl = "jdbc:postgresql://%s:%d%s".formatted(uri.getHost(), port, uri.getPath());
-
         return DataSourceBuilder.create()
-                .url(jdbcUrl)
+                .url(toJdbcUrl(databaseUrl))
                 .username(username)
                 .password(password)
                 .build();
+    }
+
+    static String toJdbcUrl(String databaseUrl) {
+        if (databaseUrl.startsWith("jdbc:postgresql://")) {
+            return databaseUrl;
+        }
+
+        URI uri = URI.create(databaseUrl);
+        if (!"postgres".equals(uri.getScheme()) && !"postgresql".equals(uri.getScheme())) {
+            throw new IllegalArgumentException("DB_URL deve usar jdbc:postgresql://, postgres:// ou postgresql://");
+        }
+
+        int port = uri.getPort() > 0 ? uri.getPort() : 5432;
+        String query = uri.getRawQuery() == null ? "" : "?" + uri.getRawQuery();
+        return "jdbc:postgresql://%s:%d%s%s".formatted(uri.getHost(), port, uri.getRawPath(), query);
     }
 }
