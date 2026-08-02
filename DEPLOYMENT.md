@@ -32,7 +32,7 @@ A Vercel limita o corpo de cada requisição ou resposta a 4,5 MB, inclusive em 
 
 | Variável | Uso |
 |---|---|
-| `PORT` | Fornecida automaticamente pela Vercel; padrão local `8080` |
+| `PORT` | O contêiner da Vercel define `80`; padrão local `8080` |
 | `SPRING_PROFILES_ACTIVE` | Use `prod` na nuvem |
 | `DB_URL` | URL `jdbc:postgresql://`, `postgres://` ou `postgresql://` |
 | `DB_USER` | Usuário do PostgreSQL |
