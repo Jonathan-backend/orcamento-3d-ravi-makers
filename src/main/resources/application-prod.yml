@@ -1,4 +1,6 @@
 spring:
+  main:
+    lazy-initialization: true
   jpa:
     hibernate:
       # Ambiente de testes público: cria/atualiza o esquema no primeiro deploy.
