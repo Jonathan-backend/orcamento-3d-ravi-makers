@@ -21,6 +21,18 @@ class RenderDataSourceConfigTest {
     }
 
     @Test
+    void usesCredentialsEmbeddedByDatabaseProvider() {
+        var connection = RenderDataSourceConfig.databaseConnection(
+                "postgresql://neon%40user:p%40ss%3Aword@db.example.com/app?sslmode=require",
+                "old-user",
+                "old-password");
+
+        assertEquals("jdbc:postgresql://db.example.com:5432/app?sslmode=require", connection.jdbcUrl());
+        assertEquals("neon@user", connection.username());
+        assertEquals("p@ss:word", connection.password());
+    }
+
+    @Test
     void rejectsUnsupportedSchemes() {
         assertThrows(IllegalArgumentException.class,
                 () -> RenderDataSourceConfig.toJdbcUrl("mysql://db.example.com/app"));
