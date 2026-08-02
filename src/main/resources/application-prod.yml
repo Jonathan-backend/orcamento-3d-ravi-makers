@@ -9,7 +9,7 @@ spring:
   data:
     jpa:
       repositories:
-        bootstrap-mode: lazy
+        bootstrap-mode: deferred
 server:
   forward-headers-strategy: native
   servlet:
