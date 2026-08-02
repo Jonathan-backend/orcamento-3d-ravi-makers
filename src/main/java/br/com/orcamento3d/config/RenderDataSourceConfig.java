@@ -18,7 +18,7 @@ public class RenderDataSourceConfig {
 
     @Bean
     DataSource dataSource(
-            @Value("${DB_URL}") String databaseUrl,
+            @Value("${DB_POSTGRES_URL:${DB_URL}}") String databaseUrl,
             @Value("${DB_USER:}") String username,
             @Value("${DB_PASSWORD:}") String password) {
         DatabaseConnection connection = databaseConnection(databaseUrl, username, password);
