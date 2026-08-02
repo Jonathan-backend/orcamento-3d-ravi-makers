@@ -6,6 +6,10 @@ spring:
       # Ambiente de testes público: cria/atualiza o esquema no primeiro deploy.
       # Antes de uso comercial, substituir por migrações Flyway versionadas.
       ddl-auto: update
+  data:
+    jpa:
+      repositories:
+        bootstrap-mode: lazy
 server:
   forward-headers-strategy: native
   servlet:
