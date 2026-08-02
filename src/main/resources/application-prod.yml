@@ -3,9 +3,9 @@ spring:
     lazy-initialization: true
   jpa:
     hibernate:
-      # Ambiente de testes público: cria/atualiza o esquema no primeiro deploy.
-      # Antes de uso comercial, substituir por migrações Flyway versionadas.
-      ddl-auto: update
+      # O esquema inicial já foi criado no Neon. Evita consultar todo o catálogo
+      # a cada cold start e mantém a inicialização dentro do limite da Vercel.
+      ddl-auto: none
   data:
     jpa:
       repositories:
